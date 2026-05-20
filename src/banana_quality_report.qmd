@@ -1,0 +1,87 @@
+---
+title: "Banana Sweetness Analysis"
+authors:
+  - name: Maeve McGillycuddy
+format: 
+  html:
+    toc: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+---
+
+## Background
+
+We are making banana bread at work today and want the best possible ingredients. 
+A key question is whether bananas from different **regions** have different 
+**sweetness**, since sugar content (measured in degrees Brix) affects the 
+flavour and texture of the final loaf.
+
+This report uses the [Banana Quality data](https://www.kaggle.com/datasets/mrmars1010/banana-quality-dataset) from Kaggle to investigate whether `region` is associated with `sugar_content_brix`.
+
+
+## Cleaning data
+
+The raw data is loaded and cleaned using `01_clean.R`. This script standardises 
+column names, parses dates, coerces categorical variables to factors, and checks 
+for missing or implausible values.
+
+```{r, results = 'hide', message=F, warning=F}
+source(here::here("src", "01_clean.R"))
+```
+
+
+## Exploration 
+
+We first visualise the relationship between region and sugar 
+content to see  the differences between groups.
+
+```{r}
+bananas %>% 
+ggplot(aes(x = reorder(region, sugar_content_brix, median),
+                    y = sugar_content_brix, fill = region)) +
+  geom_violin(alpha = 0.5, trim = FALSE) +
+  geom_point(position = position_jitter(width = 0.15, seed = 42),
+           alpha = 0.2, size = 1.0) +
+  geom_boxplot( alpha = 0.2) +
+  labs(x = "Region", y = "Sugar Content (Brix)",
+       title = "Sugar content of bananas from differnt regions") +
+  theme_classic(base_size = 13) + 
+  theme(legend.position = "none") +
+  scale_fill_brewer(palette = "Set3")
+```
+
+## Linear regression
+
+To examine the relationship between sugar content and region, we fit a 
+simple linear regression to `sugar_content_brix` against `region` 
+as the predictor. 
+
+```{r, message=F, warning=F}
+model <- lm(sugar_content_brix ~ region, data = bananas)
+```
+
+The estimated mean sugar content for each region is shown below, along with their 
+95% confidence intervals.
+
+```{r, message=F, warning=F}
+library(emmeans)
+library(broom)
+
+emmeans(model, ~ region) |>
+  tidy(conf.int = TRUE) |>
+  ggplot(aes(x = estimate, y = reorder(region, estimate))) +
+  geom_pointrange(aes(xmin = conf.low, xmax = conf.high)) +
+  labs(x = "Estimated mean Sugar Content (Brix)",
+       y = "Region") +
+  theme_classic()
+```
+
+Oh wait, we haven't accounted for how ripe the banana is.... 
+
+## Session details
+
+```{r}
+sessionInfo() |> 
+  report::report()
+```
