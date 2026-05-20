@@ -1,6 +1,6 @@
-# Project Name
+# Reproducibility Demo 
 
-Project description
+This repository contains the code and documentation for a reproducibility seminar demo analysing the Banana Quality Dataset from Kaggle.
 
 ### File structure
 The following directories are included with this template.
