@@ -1,10 +1,9 @@
 library(tidyverse)
 library(lubridate)
 library(janitor)
+library(here)
 
-setwd("C:/Users/Staff/OneDrive - UNSW/github_repos/reproducibility_demo")
-
-raw <- read.csv("data/raw/banana_quality_dataset.csv")
+raw <- read.csv(here("data", "raw" , "banana_quality_dataset.csv"))
 
 str_raw <- str(raw)
 
