@@ -45,7 +45,7 @@ ggplot(aes(x = reorder(region, sugar_content_brix, median),
            alpha = 0.2, size = 1.0) +
   geom_boxplot( alpha = 0.2) +
   labs(x = "Region", y = "Sugar Content (Brix)",
-       title = "Sugar content of bananas from differnt regions") +
+       title = "Sugar content of bananas from different regions") +
   theme_classic(base_size = 13) + 
   theme(legend.position = "none") +
   scale_fill_brewer(palette = "Set3")
